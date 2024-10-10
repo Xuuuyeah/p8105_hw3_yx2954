@@ -64,6 +64,30 @@ min_snwd_info = ny_noaa |>
   select(id, date, snwd)
 ```
 
+### tmax & tmin
+
+```{r}
+max_tmax_info = ny_noaa |>
+  mutate(tmax = as.numeric(tmax)) |>
+  filter(tmax == max(tmax, na.rm = TRUE)) |>
+  select(id, date, tmax, tmin)
+
+min_tmax_info = ny_noaa |>
+  mutate(tmax = as.numeric(tmax)) |>
+  filter(tmax == min(tmax, na.rm = TRUE)) |>
+  select(id, date, tmax, tmin)
+
+max_tmin_info = ny_noaa |>
+  mutate(tmin = as.numeric(tmin)) |>
+  filter(tmin == max(tmin, na.rm = TRUE)) |>
+  select(id, date, tmin)
+
+min_tmin_info = ny_noaa |>
+  mutate(tmin = as.numeric(tmin)) |>
+  filter(tmin == min(tmin, na.rm = TRUE)) |>
+  select(id, date, tmin)
+```
+
 ## Then, count missing info
 
 ```{r}
@@ -91,4 +115,6 @@ na_tmin = ny_noaa |>
 *   The maximum precipitation was **`r max_prcp_info[3]`** observed on **`r max_prcp_info[2]`** at **`r max_prcp_info[1]`**. The minimum is **0**, as expected. There were **`r nrow(min_prcp_info)`** days without raning.
 *   The maximum snowfall was **`r max_snow_info[3]`** on **`r max_snow_info[2]`** at **`r max_snow_info[1]`**, while the minimum was **`r min_snow_info[3]`** on **`r min_snow_info[2]`** at **`r min_snow_info[1]`**. An recording error may occur on that day as the snowfall cannot be negative.
 *   The maximum snow depth was **`r max_snwd_info[3]`** observed on **`r max_snwd_info[2]`** at **`r max_snwd_info[1]`**. The minimum is **0** as expected. There were **`r nrow(min_snwd_info)`** days without snow accumulation.
+*   The maximum tmax was **`r max_tmax_info[1,3]`** observed on **`r nrow(max_tmax_info)`** different days. The minimum was **`r min_tmax_info[3]`** observed on **`r min_tmax_info[2]`** at **`r min_tmax_info[1]`**.
+*   The maximum tmin was **`r max_tmin_info[1,3]`** on **`r nrow(max_tmin_info)`** different days. The minimum was **`r min_tmin_info[3]`** on **`r min_tmin_info[2]`** at **`r min_tmin_info[1]`**
 *   There is a high degree of missing information in the table. For snow and snwd, about **`r round(na_snow/nrow(ny_noaa)*100, 2)`%** and **`r round(na_snwd/nrow(ny_noaa)*100, 2)`%** are missing information, respectively. **`r round(na_tmax/nrow(ny_noaa)*100, 2)`%** and **`r round(na_tmin/nrow(ny_noaa)*100, 2)`%** of max and min temperature are missing.
