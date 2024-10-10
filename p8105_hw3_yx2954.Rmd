@@ -1,0 +1,86 @@
+---
+title: "p8105_hw3_yx2954"
+author: "Yiran Xu"
+date: "2024-10-10"
+output: github_document
+---
+
+```{r}
+library(p8105.datasets)
+library(dplyr)
+```
+
+
+# Problem 1
+
+## First, let’s take a few minutes to understand the dataset and the variables it contains.
+
+```{r}
+str(ny_noaa)
+nrow(ny_noaa)
+ncol(ny_noaa)
+
+n_station = 
+  ny_noaa |>
+  pull(id) |>
+  n_distinct()
+
+date_range = ny_noaa |>
+  pull(date) |>
+  range(na.rm = TRUE)
+```
+
+## Next, check the range of key variables
+
+### prcp
+
+```{r}
+max_prcp_info = ny_noaa |>
+  filter(prcp == max(prcp, na.rm = TRUE)) |>
+  select(id, date, prcp)
+
+min_prcp_info = ny_noaa |>
+  filter(prcp == min(prcp, na.rm = TRUE)) |>
+  select(id, date, prcp)
+```
+
+### snow & snwd
+
+```{r}
+max_snow_info = ny_noaa |>
+  filter(snow == max(snow, na.rm = TRUE)) |>
+  select(id, date, snow)
+
+min_snow_info = ny_noaa |>
+  filter(snow == min(snow, na.rm = TRUE)) |>
+  select(id, date, snow)
+
+max_snwd_info = ny_noaa |>
+  filter(snwd == max(snwd, na.rm = TRUE)) |>
+  select(id, date, snwd)
+
+min_snwd_info = ny_noaa |>
+  filter(snwd == min(snwd, na.rm = TRUE)) |>
+  select(id, date, snwd)
+```
+
+## Then, count missing info
+
+```{r}
+na_snow = ny_noaa |>
+  filter(is.na(snow)) |>
+  count() 
+
+na_snwd = ny_noaa |>
+  filter(is.na(snwd)) |>
+  count()
+
+na_tmax = ny_noaa |>
+  filter(is.na(tmax)) |>
+  count()
+
+na_tmin = ny_noaa |>
+  filter(is.na(tmin)) |>
+  count()
+```
+
