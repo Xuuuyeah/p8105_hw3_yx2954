@@ -191,6 +191,7 @@ It can be noticed that the average max temperature in January is greatly lower t
 
 ## make other plots
 
+### geom_hex
 ```{r}
 ggplot(ny_noaa_clean, aes(x = tmin_c, y = tmax_c)) + 
   geom_hex() + 
@@ -198,6 +199,7 @@ ggplot(ny_noaa_clean, aes(x = tmin_c, y = tmax_c)) +
        y = "t_max (°C)")
 ```
 
+### Ridge plot
 ```{r}
 ny_noaa_clean |>
   filter(snow_mm > 0 & snow_mm< 100) |>
