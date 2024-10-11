@@ -118,3 +118,40 @@ na_tmin = ny_noaa |>
 *   The maximum tmax was **`r max_tmax_info[1,3]`** observed on **`r nrow(max_tmax_info)`** different days. The minimum was **`r min_tmax_info[3]`** observed on **`r min_tmax_info[2]`** at **`r min_tmax_info[1]`**.
 *   The maximum tmin was **`r max_tmin_info[1,3]`** on **`r nrow(max_tmin_info)`** different days. The minimum was **`r min_tmin_info[3]`** on **`r min_tmin_info[2]`** at **`r min_tmin_info[1]`**
 *   There is a high degree of missing information in the table. For snow and snwd, about **`r round(na_snow/nrow(ny_noaa)*100, 2)`%** and **`r round(na_snwd/nrow(ny_noaa)*100, 2)`%** are missing information, respectively. **`r round(na_tmax/nrow(ny_noaa)*100, 2)`%** and **`r round(na_tmin/nrow(ny_noaa)*100, 2)`%** of max and min temperature are missing.
+
+## data cleaning
+*   Clean name;
+*   Convert tmax and tmin to numeric data;
+*   Keep temperature, precipitation, snowfall in reasonble units 
+*   Remove error, i.e. tmax <= tmin; snow < 0;
+*   Remove empty row
+
+```{r}
+ny_noaa_clean = ny_noaa |>
+  janitor::clean_names() |>
+  mutate(tmax = as.numeric(tmax) / 10, 
+         tmin = as.numeric(tmin) / 10,
+         prcp = prcp / 10) |> 
+  filter(tmax > tmin | is.na(tmax) | is.na(tmin)) |>
+  filter(snow >= 0 | is.na(snow)) |>
+  filter(!(is.na(snow) & is.na(snwd) & is.na(tmax) & is.na(tmin) & is.na(prcp))) |>
+  rename(
+    tmax_c = tmax,     
+    tmin_c = tmin,     
+    prcp_mm = prcp,   
+    snow_mm = snow,    
+    snwd_mm = snwd     
+  )
+```
+
+## Count most common snowfall
+
+```{r}
+ny_noaa_clean |> 
+  count(snow_mm) |>
+  arrange(desc(n)) 
+```
+
+For snowfall, the most commonly observed values is 0 among with 2007240	observations, as there is no snow in most of the days.
+
+
