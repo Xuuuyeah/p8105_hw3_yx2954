@@ -8,6 +8,7 @@ output: github_document
 ```{r}
 library(p8105.datasets)
 library(dplyr)
+library(lubridate)
 ```
 
 
@@ -122,7 +123,8 @@ na_tmin = ny_noaa |>
 ## data cleaning
 *   Clean name;
 *   Convert tmax and tmin to numeric data;
-*   Keep temperature, precipitation, snowfall in reasonble units 
+*   Keep temperature, precipitation, snowfall in reasonable units 
+*   Create seperate columns for year, month and day
 *   Remove error, i.e. tmax <= tmin; snow < 0;
 *   Remove empty row
 
@@ -131,7 +133,11 @@ ny_noaa_clean = ny_noaa |>
   janitor::clean_names() |>
   mutate(tmax = as.numeric(tmax) / 10, 
          tmin = as.numeric(tmin) / 10,
-         prcp = prcp / 10) |> 
+         prcp = prcp / 10,
+         year = year(date),
+         month = month(date),
+         day = day(date)) |> 
+  select(year, month, day, everything(), -date) |>
   filter(tmax > tmin | is.na(tmax) | is.na(tmin)) |>
   filter(snow >= 0 | is.na(snow)) |>
   filter(!(is.na(snow) & is.na(snwd) & is.na(tmax) & is.na(tmin) & is.na(prcp))) |>
@@ -152,6 +158,6 @@ ny_noaa_clean |>
   arrange(desc(n)) 
 ```
 
-For snowfall, the most commonly observed values is 0 among with 2007240	observations, as there is no snow in most of the days.
+For snowfall, the most commonly observed values is 0mm among with 2007240	observations, as there is no snow in most of the days.
 
 
