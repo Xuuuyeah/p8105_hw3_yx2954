@@ -177,7 +177,7 @@ avg_tmax_df =
 ### make plot
 
 ```{r}
-ggplot(avg_tmax_df, aes(y = avg_tmax, fill = factor(month, labels = c("January", "July")))) +
+avg_tmax_p = ggplot(avg_tmax_df, aes(y = avg_tmax, fill = factor(month, labels = c("January", "July")))) +
   geom_boxplot() +  
   facet_grid(.~ month, labeller = labeller(month = c(`1` = "January", `7` = "July"))) +
   labs(title = "Average Max Temperature in January and July by Station",
@@ -185,6 +185,8 @@ ggplot(avg_tmax_df, aes(y = avg_tmax, fill = factor(month, labels = c("January",
        y = "Average Max Temperature (°C)",
        fill = "Month") +
   theme(axis.text.x = element_blank()) 
+
+ggsave(filename = "data/plots/avg_tmax.png", avg_tmax_p)
 ```
 
 It can be noticed that the average max temperature in January is greatly lower than that in July. Outliers in both panel can be detected. The average temperature in some station significantly higher or lower than the mean.
@@ -193,15 +195,16 @@ It can be noticed that the average max temperature in January is greatly lower t
 
 ### geom_hex
 ```{r}
-ggplot(ny_noaa_clean, aes(x = tmin_c, y = tmax_c)) + 
+hex_p = ggplot(ny_noaa_clean, aes(x = tmin_c, y = tmax_c)) + 
   geom_hex() + 
   labs(x = "t_min (°C)",
        y = "t_max (°C)")
+ggsave(filename = "data/plots/tmax_tmin.png", hex_p)
 ```
 
 ### Ridge plot
 ```{r}
-ny_noaa_clean |>
+ridge_p = ny_noaa_clean |>
   filter(snow_mm > 0 & snow_mm< 100) |>
   ggplot(aes(x = snow_mm, y = as.factor(year))) + 
   geom_density_ridges() +
@@ -211,6 +214,13 @@ ny_noaa_clean |>
     title = "Distribution of Snowfall Values Greater Than 0 and Less Than 100 by Year"
   ) +
   scale_y_discrete(expand = expansion(add = c(1, 2)))
+ggsave(filename = "data/plots/snow_dist.png", ridge_p)
+```
+
+# Problem 2
+
+```{r}
+
 ```
 
 
