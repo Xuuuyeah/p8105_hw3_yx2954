@@ -452,3 +452,38 @@ most_start = rides_df |>
 
 The 5 most popular starting stations for July 2024 are: `r most_start[1, 2]`: `r most_start[1, 3]` rides; `r most_start[2, 2]`: `r most_start[2, 3]` rides; `r most_start[3, 2]`: `r most_start[3, 3]` rides; `r most_start[4, 2]`: `r most_start[4, 3]` rides; `r most_start[5, 2]`: `r most_start[5, 3]` rides. 
 
+## Median duration
+
+### Make median_df
+
+```{r}
+med_dur_df = 
+  rides_df |>
+  mutate(
+    year = year(date),
+    month = as.character(month(date)),
+    day = fct_relevel(weekdays, "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")) |>
+  group_by(year, month, day) |>
+  summarize(med_dur = median(duration, na.rm = TRUE))
+```
+
+### Make plot
+
+```{r date_med, fig.path='data/plots/', fig.ext='png'}
+date_med_p = ggplot(med_dur_df, aes(x = day, y = med_dur, fill = month)) +
+  geom_bar(stat = 'identity', position = position_dodge()) +
+  facet_grid(. ~ year) +
+  labs(title = 'Effects of Day of the Week, Month, and Year on Median Ride Duration',
+       x = 'Day of the Week',
+       y = 'Median Ride Duration (minutes)',
+       fill = 'Month') +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+date_med_p
+```
+
+### Comments
+
+*   **Days of week**: The median of duration is higher in weekend than in weekdays. This is true for 2020-01, 2020-07, and 2024-07, while the trend is not as apparent in 2024-01, where the median of duration is only slightly higher on Saturday. This suggests that people have more free time on weekends than weekdays.
+*   **Month**: The median of duration on January is is smaller than July in 2020, while the difference became slower in 2024. This could imply that people are less likely to ride a bike in cold winter.
+*   **Year**: The median of duration in July, 2024 is approximately the same as that in July, 2020, while there is a huge difference in median on July in different years. This implies that there could be an alternative way of transportation during summer.
