@@ -15,6 +15,10 @@ library(readr)
 library(tidyverse)
 ```
 
+```{r}
+knitr::opts_chunk$set(fig.path = "data/plots/")
+```
+
 # Problem 1
 
 ## First, let’s take a few minutes to understand the dataset and the variables it contains.
@@ -177,7 +181,7 @@ avg_tmax_df =
 
 ### make plot
 
-```{r}
+```{r avg_tmax_plot, fig.path='data/plots/', fig.ext='png'}
 avg_tmax_p = ggplot(avg_tmax_df, aes(y = avg_tmax, fill = factor(month, labels = c("January", "July")))) +
   geom_boxplot() +  
   facet_grid(.~ month, labeller = labeller(month = c(`1` = "January", `7` = "July"))) +
@@ -188,7 +192,7 @@ avg_tmax_p = ggplot(avg_tmax_df, aes(y = avg_tmax, fill = factor(month, labels =
   theme(axis.text.x = element_blank()) 
 
 avg_tmax_p
-ggsave(filename = "data/plots/avg_tmax.png", avg_tmax_p)
+#ggsave(filename = "data/plots/avg_tmax.png", avg_tmax_p)
 ```
 
 It can be noticed that the average max temperature in January is greatly lower than that in July. Outliers in both panel can be detected. The average temperature in some station significantly higher or lower than the mean.
@@ -196,18 +200,18 @@ It can be noticed that the average max temperature in January is greatly lower t
 ## make other plots
 
 ### geom_hex
-```{r}
+```{r hex_p, fig.path='data/plots/', fig.ext='png'}
 hex_p = ggplot(ny_noaa_clean, aes(x = tmin_c, y = tmax_c)) + 
   geom_hex() + 
   labs(x = "t_min (°C)",
        y = "t_max (°C)")
 
 hex_p
-ggsave(filename = "data/plots/tmax_tmin.png", hex_p)
+#ggsave(filename = "data/plots/tmax_tmin.png", hex_p)
 ```
 
 ### Ridge plot
-```{r}
+```{r ridge_p, fig.path='data/plots/', fig.ext='png'}
 ridge_p = ny_noaa_clean |>
   filter(snow_mm > 0 & snow_mm< 100) |>
   ggplot(aes(x = snow_mm, y = as.factor(year))) + 
@@ -220,7 +224,7 @@ ridge_p = ny_noaa_clean |>
   scale_y_discrete(expand = expansion(add = c(1, 2)))
 
 ridge_p
-ggsave(filename = "data/plots/snow_dist.png", ridge_p)
+#ggsave(filename = "data/plots/snow_dist.png", ridge_p)
 ```
 
 # Problem 2
@@ -270,7 +274,7 @@ sex_edu = final_df |>
 
 ## Visualization - age distribution
 
-```{r}
+```{r age_dist_p, fig.path='data/plots/', fig.ext='png'}
 age_dist_p = final_df |>
   ggplot(aes(x = sex, y = age)) + 
   geom_violin(aes(fill = sex), alpha = .5) + 
@@ -278,7 +282,7 @@ age_dist_p = final_df |>
   facet_grid(. ~ education)
 
 age_dist_p
-ggsave("data/plots/age_dist.png", age_dist_p)
+#ggsave("data/plots/age_dist.png", age_dist_p)
 ```
 
 ## Comments:
@@ -301,7 +305,7 @@ sum_acc =
 ```
 
 ### Make plot
-```{r}
+```{r acc_age, fig.path='data/plots/', fig.ext='png'}
 acc_age = ggplot(sum_acc, aes(x = age, y = total_acc, color = sex)) +
   geom_point() +
   geom_smooth(se = FALSE) +
@@ -310,7 +314,7 @@ acc_age = ggplot(sum_acc, aes(x = age, y = total_acc, color = sex)) +
   theme_minimal()
 
 acc_age
-ggsave("data/plots/acc_age.png", acc_age)
+#ggsave("data/plots/acc_age.png", acc_age)
 ```
 
 ### Comments
@@ -332,7 +336,7 @@ acc_t_df =
 ```
 
 ### Make plot
-```{r}
+```{r acc_min, fig.path='data/plots/', fig.ext='png'}
 acc_min = ggplot(acc_t_df, aes(x = minute, y = avg_acc_t, color = sex, education)) +
   geom_point(alpha = .2) +
   geom_smooth(aes(color = sex), se = FALSE) +
@@ -343,7 +347,7 @@ acc_min = ggplot(acc_t_df, aes(x = minute, y = avg_acc_t, color = sex, education
   )
 
 acc_min
-ggsave("data/plots/acc_min.png", acc_min)
+#ggsave("data/plots/acc_min.png", acc_min)
 ```
 
 ### Comments
