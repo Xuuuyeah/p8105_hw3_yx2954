@@ -440,4 +440,15 @@ num_rides_df =
 
 *   on January 2020, most of riders are members, the proportion reached **`r num_rides_df[1,3]/(num_rides_df[1,3] + num_rides_df[1,2])`**. There was a outbreak in casual rider number from 2020-01 to 2020-07, while the number of members slightly but continiously growing. From 2020-07 to 2024-01, the proportion of member increased, presumably casual customer were becoming members, though the total number of order decreases. From 2024-01 to 2024-07, there was another outbreak in both casual rider and member rider. The number of member consistently growed from 2020-01 to 2024-07.
 
+## 5 popular start station for July 2024
+
+```{r}
+most_start = rides_df |>
+  filter(station_status == "start") |>
+  group_by(date, station_name) |>
+  count() |>
+  arrange(desc(n))
+```
+
+The 5 most popular starting stations for July 2024 are: `r most_start[1, 2]`: `r most_start[1, 3]` rides; `r most_start[2, 2]`: `r most_start[2, 3]` rides; `r most_start[3, 2]`: `r most_start[3, 3]` rides; `r most_start[4, 2]`: `r most_start[4, 3]` rides; `r most_start[5, 2]`: `r most_start[5, 3]` rides. 
 
