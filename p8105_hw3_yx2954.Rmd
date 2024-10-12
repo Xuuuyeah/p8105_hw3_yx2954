@@ -357,16 +357,26 @@ acc_min
 
 # Problem 3
 
-## Import data
+## Import data, Clean, tidy data and describe data
 
+### Import data
 ```{r}
-Jan_20 = read_csv("data/citibike/Jan 2020 Citi.csv.zip")
-Jan_24 = read_csv("data/citibike/Jan 2024 Citi.csv.zip")
-July_20 = read_csv("data/citibike/July 2020 Citi.csv.zip")
-July_24 = read_csv("data/citibike/July 2024 Citi.csv.zip")
+Jan_20 = 
+  read_csv("data/citibike/Jan 2020 Citi.csv.zip") |>
+  mutate(date = as.Date("2020-01-01"))
+
+Jan_24 = 
+  read_csv("data/citibike/Jan 2024 Citi.csv.zip") |>
+    mutate(date = as.Date("2024-01-01"))
+
+July_20 = read_csv("data/citibike/July 2020 Citi.csv.zip") |>
+      mutate(date = as.Date("2020-07-01"))
+
+July_24 = read_csv("data/citibike/July 2024 Citi.csv.zip") |>
+      mutate(date = as.Date("2024-07-01"))
 ```
 
-## Clean, and tidy data
+### Clean, and tidy data
 
 ```{r}
 rides_df = 
@@ -379,7 +389,7 @@ rides_df =
     names_pattern = "(start|end)_station_name") 
 ```
 
-## Description
+### Description
 
 ```{r}
 ride_types =
@@ -413,5 +423,21 @@ num_member =
 *   On **`r most_day[1, 1]`**, citibike get the most orders **(`r most_day[1, 2]`)**.
 *   The average duration for a single order is **`r avg_time`**.
 *   For all order, **`r num_member[2, 2]/nrow(rides_df) * 100`%** are from members.
+
+## Total number of rides in each combination of year and month
+
+```{r}
+num_rides_df = 
+  rides_df |>
+  group_by(date, member_casual) |> 
+  distinct(ride_id) |>
+  count() |>
+  pivot_wider(
+    names_from = member_casual, values_from = n) 
+
+```
+### Comments
+
+*   on January 2020, most of riders are members, the proportion reached **`r num_rides_df[1,3]/(num_rides_df[1,3] + num_rides_df[1,2])`**. There was a outbreak in casual rider number from 2020-01 to 2020-07, while the number of members slightly but continiously growing. From 2020-07 to 2024-01, the proportion of member increased, presumably casual customer were becoming members, though the total number of order decreases. From 2024-01 to 2024-07, there was another outbreak in both casual rider and member rider. The number of member consistently growed from 2020-01 to 2024-07.
 
 
