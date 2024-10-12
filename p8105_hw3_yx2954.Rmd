@@ -11,8 +11,8 @@ library(dplyr)
 library(lubridate)
 library(ggplot2)
 library(ggridges)
+library(readr)
 ```
-
 
 # Problem 1
 
@@ -219,8 +219,31 @@ ggsave(filename = "data/plots/snow_dist.png", ridge_p)
 
 # Problem 2
 
+## load data
 ```{r}
+demo_df = read_csv("data/nhanes_covar.csv", na = c("NA", ".", ""), skip = 4) |>
+  janitor::clean_names() 
+  
+acc_df = read_csv("data/nhanes_accel.csv", na = c("NA", ".", "")) |>
+  janitor::clean_names() 
 
 ```
 
+## merge df
+
+```{r}
+anti_join(demo_df, acc_df, by = "seqn")
+
+merged_df = left_join(demo_df, acc_df, by = "seqn")
+```
+
+## tidy df
+```{r}
+merged_df |> 
+  pivot_longer(cols = starts_with("min"),
+               names_to = "minute",
+               values_to = "value") |>
+  filter(age >= 21) |>
+  drop_na(sex, age, bmi, education)
+```
 
