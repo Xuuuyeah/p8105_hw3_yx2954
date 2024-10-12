@@ -40,7 +40,7 @@ date_range = ny_noaa |>
 
 ## Next, check the range of key variables
 
-### prcp
+### Prcp
 
 ```{r}
 max_prcp_info = ny_noaa |>
@@ -52,7 +52,7 @@ min_prcp_info = ny_noaa |>
   select(id, date, prcp)
 ```
 
-### snow & snwd
+### Snow & snwd
 
 ```{r}
 max_snow_info = ny_noaa |>
@@ -72,7 +72,7 @@ min_snwd_info = ny_noaa |>
   select(id, date, snwd)
 ```
 
-### tmax & tmin
+### Tmax & tmin
 
 ```{r}
 max_tmax_info = ny_noaa |>
@@ -127,7 +127,7 @@ na_tmin = ny_noaa |>
 *   The maximum tmin was **`r max_tmin_info[1,3]`** on **`r nrow(max_tmin_info)`** different days. The minimum was **`r min_tmin_info[3]`** on **`r min_tmin_info[2]`** at **`r min_tmin_info[1]`**
 *   There is a high degree of missing information in the table. For snow and snwd, about **`r round(na_snow/nrow(ny_noaa)*100, 2)`%** and **`r round(na_snwd/nrow(ny_noaa)*100, 2)`%** are missing information, respectively. **`r round(na_tmax/nrow(ny_noaa)*100, 2)`%** and **`r round(na_tmin/nrow(ny_noaa)*100, 2)`%** of max and min temperature are missing.
 
-## data cleaning
+## Data cleaning
 *   Clean name;
 *   Convert tmax and tmin to numeric data;
 *   Keep temperature, precipitation, snowfall in reasonable units 
@@ -167,9 +167,9 @@ ny_noaa_clean |>
 
 For snowfall, the most commonly observed values is 0mm among with 2007240	observations, as there is no snow in most of the days.
 
-## make two-panel plot
+## Make two-panel plot
 
-### filter and group data
+### Filter and group data
 
 ```{r}
 avg_tmax_df = 
@@ -179,7 +179,7 @@ avg_tmax_df =
   summarise(avg_tmax = mean(tmax_c))
 ```
 
-### make plot
+### Make plot
 
 ```{r avg_tmax_plot, fig.path='data/plots/', fig.ext='png'}
 avg_tmax_p = ggplot(avg_tmax_df, aes(y = avg_tmax, fill = factor(month, labels = c("January", "July")))) +
@@ -197,9 +197,9 @@ avg_tmax_p
 
 It can be noticed that the average max temperature in January is greatly lower than that in July. Outliers in both panel can be detected. The average temperature in some station significantly higher or lower than the mean.
 
-## make other plots
+## Make other plots
 
-### geom_hex
+### Geom_hex
 ```{r hex_p, fig.path='data/plots/', fig.ext='png'}
 hex_p = ggplot(ny_noaa_clean, aes(x = tmin_c, y = tmax_c)) + 
   geom_hex() + 
@@ -229,7 +229,7 @@ ridge_p
 
 # Problem 2
 
-## load data
+## Load data
 ```{r}
 demo_df = read_csv("data/nhanes_covar.csv", na = c("NA", ".", ""), skip = 4) |>
   janitor::clean_names() 
@@ -239,7 +239,7 @@ acc_df = read_csv("data/nhanes_accel.csv", na = c("NA", ".", "")) |>
 
 ```
 
-## merge df
+## Merge df
 
 ```{r}
 anti_join(demo_df, acc_df, by = "seqn")
@@ -247,7 +247,7 @@ anti_join(demo_df, acc_df, by = "seqn")
 merged_df = left_join(demo_df, acc_df, by = "seqn")
 ```
 
-## tidy & orgnize df
+## Tidy & orgnize df
 ```{r}
 final_df = 
   merged_df |> 
@@ -354,3 +354,64 @@ acc_min
 *   **General:** Across all education levels, participants exhibit a similar pattern of activity throughout the day. The activity level gradually increases in the morning, peaks in the middle of the day, and then declines during the evening. This trend suggests that population follow a normal daily rhythm, and mostly go to bed at minute 0.
 *   **Female VS Male:** In all education levels, there is a slight difference between the activity patterns of males and females. In general, male is less active than female during daytime, and tend to stay up late in the evening. According to the smooth trend, female has a higher peak value than male during daytime.
 *   **Education level:** There is barely an impact from education level, but it appears that people with less than high school background tend to have a slightly higher peak during daytime.
+
+# Problem 3
+
+## Import data
+
+```{r}
+Jan_20 = read_csv("data/citibike/Jan 2020 Citi.csv.zip")
+Jan_24 = read_csv("data/citibike/Jan 2024 Citi.csv.zip")
+July_20 = read_csv("data/citibike/July 2020 Citi.csv.zip")
+July_24 = read_csv("data/citibike/July 2024 Citi.csv.zip")
+```
+
+## Clean, and tidy data
+
+```{r}
+rides_df = 
+  bind_rows(Jan_20, Jan_24, July_20, July_24) |>
+  distinct() |>
+  janitor::clean_names() |>
+  pivot_longer(
+    start_station_name: end_station_name,
+    names_to = "station_status", values_to = "station_name",
+    names_pattern = "(start|end)_station_name") 
+```
+
+## Description
+
+```{r}
+ride_types =
+  rides_df |>
+  pull(rideable_type) |>
+  unique()
+```
+
+```{r}
+most_day =
+  rides_df |>
+  count(weekdays) |>
+  arrange(desc(n))
+```
+
+```{r}
+avg_time =
+  rides_df |>
+  pull(duration) |>
+  mean(na.rm = TRUE)
+```
+
+```{r}
+num_member = 
+  rides_df |>
+  count(member_casual)
+```
+
+*   The combine dataset contains **`r nrow(rides_df)`** order information, including order id, bike types, order data, order duration, member status, start and end location.
+*   Types of bikes includes: **`r ride_types[1]`** and **`r ride_types[2]`**
+*   On **`r most_day[1, 1]`**, citibike get the most orders **(`r most_day[1, 2]`)**.
+*   The average duration for a single order is **`r avg_time`**.
+*   For all order, **`r num_member[2, 2]/nrow(rides_df) * 100`%** are from members.
+
+
