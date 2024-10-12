@@ -240,7 +240,8 @@ merged_df = left_join(demo_df, acc_df, by = "seqn")
 
 ## tidy & orgnize df
 ```{r}
-merged_df |> 
+final_df = 
+  merged_df |> 
   pivot_longer(cols = starts_with("min"),
                names_to = "minute",
                values_to = "value") |>
@@ -254,3 +255,30 @@ merged_df |>
 
 ```
 
+## reader-friendly table for the number of men and women in each education category
+
+```{r}
+sex_edu = final_df |>
+  group_by(sex, education) |>
+  count()
+```
+
+## Visualization - age distribution
+
+```{r}
+age_dist_p = final_df |>
+  ggplot(aes(x = sex, y = age)) + 
+  geom_violin(aes(fill = sex), alpha = .5) + 
+  stat_summary(fun = "median", color = "blue") +
+  facet_grid(. ~ education)
+
+ggsave("data/plots/age_dist.png", age_dist_p)
+```
+
+## Comments:
+*   Within male group, the number of people with more than high school education background is more than those with high school equivalent, while the number of those with less than high school education background is the least. The numbers are **`r sex_edu[3, 3]`**, **`r sex_edu[2, 3]`**, and **`r sex_edu[1, 3]`**, respectively.
+*   Within the female group, the number of those with high school equivalent education background is the least, followed by those with less than high school, and more than high school education background. The numbers are  **`r sex_edu[5, 3]`**, **`r sex_edu[4, 3]`**, and **`r sex_edu[6, 3]`**, respectively.
+*   Comparing the male group and the female group, there are more males with high school equivalent background; however, there are more females with less than high school and more than high school background.
+*   The age distribution across different education background is shown in the picture. In Less than High School group, more males are concentrated on the age of 45 and 70-80, while above 70 are the most common age for female. The median age in female group is slightly higher than the median in male group.
+*   In High School Equivalent group, more males are concentrated on the age of 20-35 and 50-70, while 60-80 are the most common age for female. The median age in female group is higher than the median in male group.
+*   In More than High School group, the age distribution is relatively even, while 25-35 are the most common age for female, which is greatly different to the previous two groups. The median age in female group is slightly lower than the median in male group.
