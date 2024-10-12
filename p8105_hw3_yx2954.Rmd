@@ -12,6 +12,7 @@ library(lubridate)
 library(ggplot2)
 library(ggridges)
 library(readr)
+library(tidyverse)
 ```
 
 # Problem 1
@@ -237,13 +238,19 @@ anti_join(demo_df, acc_df, by = "seqn")
 merged_df = left_join(demo_df, acc_df, by = "seqn")
 ```
 
-## tidy df
+## tidy & orgnize df
 ```{r}
 merged_df |> 
   pivot_longer(cols = starts_with("min"),
                names_to = "minute",
                values_to = "value") |>
   filter(age >= 21) |>
-  drop_na(sex, age, bmi, education)
+  drop_na(sex, age, bmi, education) |>
+  mutate(
+    sex = recode(sex, "1" = "Male", "2" = "Female"),
+    education = recode(education, "1" = "Less than High School", "2" = "High School Equivalent", "3" = "More than High School"),
+    sex = as_factor(sex), 
+    education = fct_relevel(education, "Less than High School", "High School Equivalent", "More than High School"))
+
 ```
 
