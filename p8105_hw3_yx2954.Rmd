@@ -5,7 +5,7 @@ date: "2024-10-10"
 output: github_document
 ---
 
-```{r}
+```{r include=FALSE}
 library(p8105.datasets)
 library(dplyr)
 library(lubridate)
@@ -13,10 +13,6 @@ library(ggplot2)
 library(ggridges)
 library(readr)
 library(tidyverse)
-```
-
-```{r}
-knitr::opts_chunk$set(fig.path = "data/plots/")
 ```
 
 # Problem 1
@@ -487,3 +483,38 @@ date_med_p
 *   **Days of week**: The median of duration is higher in weekend than in weekdays. This is true for 2020-01, 2020-07, and 2024-07, while the trend is not as apparent in 2024-01, where the median of duration is only slightly higher on Saturday. This suggests that people have more free time on weekends than weekdays.
 *   **Month**: The median of duration on January is is smaller than July in 2020, while the difference became slower in 2024. This could imply that people are less likely to ride a bike in cold winter.
 *   **Year**: The median of duration in July, 2024 is approximately the same as that in July, 2020, while there is a huge difference in median on July in different years. This implies that there could be an alternative way of transportation during summer.
+
+## duration distribution
+
+### Make dist_df
+
+```{r}
+dist_df = 
+  rides_df |>
+  mutate(
+    month = factor(format(date, '%m'), levels = c('01', '07'), labels = c('January', 'July')), 
+    year = year(date)) |>
+  filter(year == "2024")
+```
+
+### Make plot
+
+```{r dur_dist_p, fig.path='data/plots/', fig.ext='png'}
+dur_dist_p = ggplot(dist_df, aes(x = month, y = duration, fill = member_casual)) +
+  geom_boxplot() +
+  facet_grid(. ~ rideable_type, scales = 'free') +
+  labs(title = 'Impact of Month, Membership Status, and Bike Type on Ride Duration in 2024',
+       x = 'Month',
+       y = 'Ride Duration (minutes)',
+       fill = 'Membership Status') +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+dur_dist_p
+```
+
+### Discussion
+*   **General**: Plenty of outliers are detected near all boxes, suggesting a variability in duration. It worth noting that the electric bike group is more likely to have outlier in very long duration. This may be the case as electric bike is less energy-demanding.
+*   **Impact of month**: For both bike types and membership, status, the ride duration tends to be slightly higher in July compared to January.
+*   **Membership status**: Members generally have shorter and more consistent ride duration, as indicated by the thinner box that is lower in member group than in casual group. Casual users display a wider range of ride duration, suggesting more variability in usage patterns.
+*   **Bike type**: The duration is slightly higher in classic bike group than in electric bike. Besides, the duration is slightly more consistent in electric bike group. These suggest electric might be faster than classic bike and therefore cut down the time on road. 
