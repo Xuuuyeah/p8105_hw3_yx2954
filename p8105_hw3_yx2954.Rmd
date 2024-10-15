@@ -20,6 +20,7 @@ library(tidyverse)
 ## First, let’s take a few minutes to understand the dataset and the variables it contains.
 
 ```{r}
+data("ny_noaa")
 str(ny_noaa)
 nrow(ny_noaa)
 ncol(ny_noaa)
