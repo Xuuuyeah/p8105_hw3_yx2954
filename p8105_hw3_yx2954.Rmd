@@ -197,12 +197,13 @@ It can be noticed that the average max temperature in January is greatly lower t
 
 ### Geom_hex
 ```{r tmin_max_p, fig.path='data/plots/', fig.ext='png'}
-hex_p = ggplot(ny_noaa_clean, aes(x = tmin_c, y = tmax_c)) + 
+tmin_max_p = ggplot(ny_noaa_clean, aes(x = tmin_c, y = tmax_c)) + 
   geom_hex() + 
   labs(x = "t_min (°C)",
-       y = "t_max (°C)")
+       y = "t_max (°C)",
+       title = "tmax vs tmin")
 
-hex_p
+tmin_max_p
 ```
 
 ### Ridge plot
@@ -213,7 +214,7 @@ ridge_p = ny_noaa_clean |>
   geom_density_ridges() +
   labs(
     x = "Snowfall (mm)",
-    y = "Frequency",
+    y = "Year",
     title = "Distribution of Snowfall Values Greater Than 0 and Less Than 100 by Year"
   ) +
   scale_y_discrete(expand = expansion(add = c(1, 2)))
@@ -279,7 +280,10 @@ age_dist_p = final_df |>
   ggplot(aes(x = sex, y = age)) + 
   geom_violin(aes(fill = sex), alpha = .5) + 
   stat_summary(fun = "median", color = "blue") +
-  facet_grid(. ~ education)
+  facet_grid(. ~ education) +
+  labs(
+    title = "Age distributions for men and women in each education category"
+  )
 
 age_dist_p
 ```
